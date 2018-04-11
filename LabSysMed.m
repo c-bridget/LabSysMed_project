@@ -1,8 +1,8 @@
 
 %% import and compile data
 
-dem_file = '../../Downloads/dem.csv';
-dia_file = '../../Downloads/dia.csv';
+dem_file = 'dem.csv';
+dia_file = 'dia.csv';
 
 dem_data = sortrows(readtable(dem_file, 'TextType', 'string'),1);
 dia_data = sortrows(readtable(dia_file),1);
