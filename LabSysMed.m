@@ -14,16 +14,12 @@ pat_diag = get_patient_data(patients, diagnoses);
 
 %% calculate comorbidity
 for p=1:size(pat_diag, 1)
-    pat_diag(p).comorb = comorbidity_calc(pat_diag(p));
+    pat_diag(p).comorb = mean(comorbidity_calc(pat_diag(p)));
 end
 %% breaking down
-fem_pat = [];
-mal_pat = [];
-afam = [];
-asam = [];
-natam = [];
-hisp = [];
-white = [];
+fem_pat = []; mal_pat = []; 
+afam = []; asam = []; natam = []; hisp = []; white = [];
+deceased = []; alive = [];
 for p=1:size(pat_diag, 1)
     if pat_diag(p).gender == 'female'
         fem_pat = [fem_pat pat_diag(p)];
@@ -34,12 +30,17 @@ for p=1:size(pat_diag, 1)
         natam = [natam pat_diag(p)];
     elseif pat_diag(p).race == 'Asian-ASIAN'
         asam = [asam pat_diag(p)];
-    elseif pat_diag(p).race == 'Black-BLACK' || pat_diag(p).race == 'BLACK OR AFRICAN AMERICAN'
+    elseif pat_diag(p).race == 'Black-BLACK'
         afam = [afam pat_diag(p)];
     elseif pat_diag(p).race == 'Hispanic-HISPANIC'
         hisp = [hisp pat_diag(p)];
     elseif pat_diag(p).race == 'White-WHITE'
         white = [white pat_diag(p)];
+    end
+    if pat_diag(p).vital_status == 'deceased'
+        deceased = [deceased pat_diag(p)];
+    else
+        alive = [alive pat_diag(p)];
     end
 end
 
@@ -63,8 +64,19 @@ end
 % legend('female', 'male')
 
 
-%% comorbidity v age v visits v # of doctors 
+%% comorbidity 
+% significantly lower avg comorbidity for afam and women
+[h1, p1] = ttest2([afam.comorb], [white.comorb])
+[h2, p2] = ttest2([mal_pat.comorb], [fem_pat.comorb])
+% controlling for number of visits, how many unique doctors do patients get?
 
+
+% comorbidity + number of visits
+X1 = [ones(400,1) [pat_diag.comorb]' [pat_diag.visits]'];
+b1 = regress([pat_diag.docs]', X1)
+
+X2 = [ones(size([afam.comorb]))' [afam.comorb]' [afam.visits]'];
+b2 = regress([afam.docs]', X2)
 
 
 

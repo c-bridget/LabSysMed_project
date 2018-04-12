@@ -112,6 +112,6 @@ for d=1:length(patient.dia_codes)
     end
     weights = [weights weight]; 
 end
-comorbidity = sum(weights);
+comorbidity = weights;
 end
 

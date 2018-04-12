@@ -8,6 +8,9 @@ function [pat_structs] = get_patient_data(patients, diagnoses)
 
 nex = 1;
 for p = 1:size(patients,1)
+    if patients(p).race == 'BLACK OR AFRICAN AMERICAN'
+        patients(p).race = string('Black-BLACK');
+    end
     dia_codes = [];
     dia_dates = [];
     in_out = [];
